@@ -10,6 +10,7 @@ packages = [{include = "operator_custom_tg"}]
 python = "^3.8"
 apache-airflow = "^2.5.3"
 pylint = "^2.17.2"
+black = "^23.3.0"
 
 
 [build-system]
