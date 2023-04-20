@@ -49,10 +49,7 @@ Airflow에서 모든 훅의 추상 클래스의 ‘BaseHook’ 클래스의 서�
     | wait_fro_downstream | bool | true로 설정 시, 특정 task의 객체는 이전 task의 다운스트림 아래에 있는 task가 완료 될때까지 기다리게 끔 설정 |
     | dag | DAG | 해당 task가 포함된 dat 객체 |
     | priority_weigh | int | task의 중요도를 설정,executor에 의해서 트리거 될때 해당 값이 높게 설정되어진 항목을 먼저 백업 |
-    | weight_rule | str | weighting 함수는 task의 전체 가중치를 효과적으로 반영하기 위해 사용, option의 값으로는 downstream, upstream, absolute 등이 존재
-    * downstream:  다운스트림으로 설정된 경우 작업의 유효 가중치는 모든 다운스트림 하위 항목의 총합
-    * upstream: 업스트림으로 설정된 경우 유효 가중치는 모든 업스트림 상위 항목의 합계
-    * absolute: 지정한 priority_weight 값을 통해 설정됨 |
+    | weight_rule | str | weighting 함수는 task의 전체 가중치를 효과적으로 반영하기 위해 사용, option의 값으로는 downstream, upstream, absolute 등이 존재 |
     | queue | str | 어떠한 queue에서 job을 실행 시킬 지 설정합니다. Airflow worker를 실행시킬때 정의한 celery worker의 queue 이름 |
     | pool | str, None | pools 페이지에서 설정한 pool을 사용 |
     | pool_slots | int | 사용할 pool slot을 지정합니다, 해당 pool slot에서 가용가능한 task 갯수만큼만 실행 |
