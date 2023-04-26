@@ -66,10 +66,7 @@ Custom Hook 개발은 Airflow에서 모든 훅의 추상 클래스의 ‘BaseHoo
     | wait_fro_downstream | bool | true로 설정 시, 특정 task의 객체는 이전 task의 다운스트림 아래에 있는 task가 완료 될때까지 기다리게 끔 설정 |
     | dag | DAG | 해당 task가 포함된 dat 객체 |
     | priority_weigh | int | task의 중요도를 설정,executor에 의해서 트리거 될때 해당 값이 높게 설정되어진 항목을 먼저 백업 |
-    | weight_rule | str | weighting 함수는 task의 전체 가중치를 효과적으로 반영하기 위해 사용, option의 값으로는 downstream, upstream, absolute 등이 존재
-    downstream:  다운스트림으로 설정된 경우 작업의 유효 가중치는 모든 다운스트림 하위 항목의 총합
-    upstream: 업스트림으로 설정된 경우 유효 가중치는 모든 업스트림 상위 항목의 합계
-    absolute: 지정한 priority_weight 값을 통해 설정됨 |
+    | weight_rule | str | weighting 함수는 task의 전체 가중치를 효과적으로 반영하기 위해 사용, option의 값으로는 downstream, upstream, absolute 등이 존재 - downstream:  다운스트림으로 설정된 경우 작업의 유효 가중치는 모든 다운스트림 하위 항목의 총합 - upstream: 업스트림으로 설정된 경우 유효 가중치는 모든 업스트림 상위 항목의 합계 - absolute: 지정한 priority_weight 값을 통해 설정됨 |
     | queue | str | 어떠한 queue에서 job을 실행 시킬 지 설정합니다. Airflow worker를 실행시킬때 정의한 celery worker의 queue 이름 |
     | pool | str, None | pools 페이지에서 설정한 pool을 사용 |
     | pool_slots | int | 사용할 pool slot을 지정합니다, 해당 pool slot에서 가용가능한 task 갯수만큼만 실행 |
@@ -80,8 +77,7 @@ Custom Hook 개발은 Airflow에서 모든 훅의 추상 클래스의 ‘BaseHoo
     | on_success_callback | TaskPreExecuteHook | task가 성공적으로 완료되었을 때 호출할 함수를 정의 |
     | pre_execute | TaskPreExecuteHook,None | task가 실행되기전 실행할 함수를 정의 |
     | post_execute | TaskPostExecuteHook | task가 정상적으로 실행 된 뒤 실행 시킬 함수를 정의 |
-    | trigger_rule | str | 현재 트리거를 트리거하기 위해 선행 작업의 의존성에 대한 정책을 정의
-    [ex] all_success : 선행 작업들이 모두 성공해야 현재 작업을 실행 |
+    | trigger_rule | str | 현재 트리거를 트리거하기 위해 선행 작업의 의존성에 대한 정책을 정의 - all_success : 선행 작업들이 모두 성공해야 현재 작업을 실행 |
     | resources | dic[str,any], None | resource 매개변수의 이름 |
     | run_as_user | str,None | unix의 어떤 user의 권한으로 해당 task를 실행 시킬 것인지 정의 |
     | max_active_tis_per_dag | int, None | 해당 task가 소속된 dag 내에서 동시에 실행시킬 수 있는 갯수를 제한 |
