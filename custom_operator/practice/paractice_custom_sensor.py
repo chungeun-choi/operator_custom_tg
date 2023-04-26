@@ -1,6 +1,6 @@
 from airflow.sensors.base import BaseSensorOperator
 from airflow.utils.decorators import apply_defaults
-from pracitce_custom_hook import MovielensHook
+from custom_operator.practice.pracitce_custom_hook import MovielensHook
 
 class MovielenRatinsSensor(BaseSensorOperator):
     template_fields = ("_start_date","end_date")

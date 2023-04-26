@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  elasticsearch_sigle_node:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.3.3
+    container_name: es_single_node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+      - http.port=9200
+      - transport.port=9300
+
+    ports:
+      - 9200:9200
+      - 9300:9300
+      
+    # volumes:
+    #   #- ../../config/single:/usr/share/elasticsearch/config
+    #   - ../../config/single/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    #   - ../../config/single/jvm.options:/usr/share/elasticsearch/config/jvm.options
+    #   - ./data:/usr/share/elasticsearch/data
+    #   - ./logs:/usr/share/elasticsearch/logs
