@@ -2,12 +2,8 @@
     "python.formatting.provider": "black",
     "python.linting.pylintEnabled": false,
     "python.linting.enabled": true,
-    "[python]": {
-      "editor.defaultFormatter": "ms-python.python",
-      "editor.formatOnSave": true
-    },
-    "python.linting.flake8Enabled": false,
-    "python.linting.flake8Args": [
-      "--max-line-length=100"
-    ]
+    "python.formatting.blackArgs": [
+      "-S",
+      "-l 100"
+  ]
   }
