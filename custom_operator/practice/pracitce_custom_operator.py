@@ -2,7 +2,7 @@ from airflow.models import BaseOperator
 from airflow.utils.context import Context
 from airflow.utils.decorators import apply_defaults
 from typing import Any
-from custom_operator.practice.pracitce_custom_hook import MovielensHook
+from practice.pracitce_custom_hook import MovielensHook
 import os, json
 
 # DAG에서 호출하여 사용하기위한 custom operator를 정의합니다 기본적으로 BaseOperator를 상속받아 생성됩니다
