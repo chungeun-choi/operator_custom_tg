@@ -27,9 +27,6 @@ class ElasticsearchHook(BaseHook):
                 hosts= self.get_url(),
             )
 
-        if self._basic_auth:
-            self._session.basic_auth = self._basic_auth
-
 
         return self._session 
 

@@ -1,0 +1,22 @@
+{
+  "docker_elastic": {
+    "conn_type": "elasticsearch",
+    "description": "",
+    "login": "",
+    "password": null,
+    "host": "es_single_node",
+    "port": 9200,
+    "schema": "",
+    "extra": ""
+  },
+  "test": {
+    "conn_type": "elasticsearch",
+    "description": "",
+    "login": "",
+    "password": null,
+    "host": "localhost",
+    "port": 9200,
+    "schema": "",
+    "extra": ""
+  }
+}
