@@ -2,10 +2,12 @@ from generator.sample import CheckSensorOperator,MakeIndexOperator,InsertOperato
 from airflow import DAG 
 from datetime import datetime
 from airflow.sensors.python import PythonSensor
+from airflow.models.variable import Variable
+from airflow.utils.task_group import TaskGroup
 
 
 CONNECTION = "docker_elastic"
-LOG_NAME = "ips"
+LOG_NAME = Variable.get("sample_log",deserialize_json=True)
 
 
 with DAG(
@@ -14,21 +16,24 @@ with DAG(
     schedule="@once",
     start_date = datetime(2022,5,28),
 ) as dag:
-    check_sample_log = CheckSensorOperator(
-        task_id= "check_sensor_task",
-        conn_id=CONNECTION,
-        log_name=LOG_NAME
-    )
-    make_index= MakeIndexOperator(
-        task_id= "make_index",
-        conn_id=CONNECTION,
-        index_name=LOG_NAME
-    )
-    insert_sample_data = InsertOperator(
-        task_id="insert_sample_data",
-        conn_id=CONNECTION,
-        log_name=LOG_NAME
-    )
+    
+    for log in LOG_NAME:
+        with TaskGroup(group_id='Group_{}'.format(log)) as innerGroup:
+            check_sample_log = CheckSensorOperator(
+                task_id= "check_sensor_task_{}".format(log),
+                conn_id=CONNECTION,
+                log_name=log
+            )
+            make_index= MakeIndexOperator(
+                task_id= "make_index_{}".format(log),
+                conn_id=CONNECTION,
+                index_name=log
+            )
+            insert_sample_data = InsertOperator(
+                task_id="insert_sample_data_{}".format(log),
+                conn_id=CONNECTION,
+                log_name=log
+        )
 
 
 

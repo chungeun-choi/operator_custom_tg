@@ -8,7 +8,8 @@ from elastic.hook import ElasticsearchHook
 from elastic.config import ElasticConfig
 import logging,orjson
 from elasticsearch import helpers
-DEFALUT_PATH = './sample_data/'
+from airflow.exceptions import AirflowException
+DEFALUT_PATH = '/opt/airflow/dags/sample_data/'
 
 class CheckSensorOperator(BaseSensorOperator):
     template_fields = {"_log_name"}
@@ -32,11 +33,12 @@ class CheckSensorOperator(BaseSensorOperator):
         
 class InsertOperator(BaseOperator):
     template_fields = {"_log_name"}
-
+    
+    @apply_defaults
     def __init__(self,conn_id,log_name,**kwargs):
         super().__init__(**kwargs)
         self.conn= ElasticsearchHook(conn_id= conn_id or "local").get_conn()
-        self.log_name = log_name
+        self._log_name = log_name
         self.smaple_data_path = DEFALUT_PATH+'{}.json'.format(log_name)
     
     def execute(self, context: Context) -> Any:
@@ -59,7 +61,7 @@ class MakeIndexOperator(BaseOperator):
         self.conn= ElasticsearchHook(conn_id= conn_id or "local").get_conn()
         self._index_name = index_name
         self._index_template_path = DEFALUT_PATH+'index_template/{}_template.json'.format(index_name)
-        self._index_ilm_path = DEFALUT_PATH+'./ilm_template/{}_ilm.json'.format(index_name)
+        self._index_ilm_path = DEFALUT_PATH+'ilm_template/{}_ilm.json'.format(index_name)
 
     def __call__(self) -> Any:
         self.make_index_with_all()
@@ -73,12 +75,12 @@ class MakeIndexOperator(BaseOperator):
         해당 객체를 생성할 떄 사용한 변수들을 사용하여 elasticsearch index를 생성하기위한
         요소들을 정의하고 elasticsearch에 등록하는 작업을 합니다
         '''
-        try:
-            self.make_ilm_policy()
-            self.make_index_template()
-            self.make_index()
-        except:
-            logging.error("Error generating index for example data")
+        
+        self.make_ilm_policy()
+        self.make_index_template()
+        self.make_index()
+
+            #AirflowException("Error generating index for example data")
 
     def make_index(self):
         '''
