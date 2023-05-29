@@ -24,7 +24,7 @@ class MovielenRatinsSensor(BaseSensorOperator):
                     batch_size=1
                 )
             )
-
+            return True
         except StopIteration:
             self.log.info(
                 f""
