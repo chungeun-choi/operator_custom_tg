@@ -32,9 +32,11 @@ with DAG(
             insert_sample_data = InsertOperator(
                 task_id="insert_sample_data_{}".format(log),
                 conn_id=CONNECTION,
-                log_name=log
+                log_name=log,
+                trigger_rule = "always"
         )
 
+        check_sample_log >> make_index >> insert_sample_data
 
 
-check_sample_log >> make_index >> insert_sample_data
+

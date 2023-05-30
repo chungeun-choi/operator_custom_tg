@@ -4,7 +4,7 @@ from airflow.utils.context import Context
 from airflow.utils.decorators import apply_defaults
 from typing import Any
 from elastic.hook import ElasticsearchHook
-
+from elasticsearch.exceptions import RequestError
 from elastic.config import ElasticConfig
 import logging,orjson
 from elasticsearch import helpers
@@ -22,11 +22,11 @@ class CheckSensorOperator(BaseSensorOperator):
 
     def poke(self,context):
         if self.conn.indices.exists(index=self._log_name):
-            self.conn.close()
+            #self.conn.close()
             return False
         else:
             logging.warning("Sample data does not exist")
-            self.conn.close()
+            #self.conn.close()
             return True
 
 
@@ -86,8 +86,22 @@ class MakeIndexOperator(BaseOperator):
         '''
         새로운 index를 만드는 함수입니다
         '''
-        self.conn.indices.create(index=self._index_name)
+        try:
+            self.conn.indices.create(index=self._index_name)
+        except RequestError as e:
+            logging.info(e.info)
         
+
+    def create_alias(self):
+        '''
+        생성한 index에 aliase를 설정하여 줍니다
+        '''
+        
+        self.conn.indices.put_alias(self._index_name,self._index_name)
+
+
+        pass
+
 
     def make_ilm_policy(self):
         '''
