@@ -39,7 +39,8 @@ def test_ConvertDataFrame():
     print(test_obj.extract_case())
 
 if __name__ == "__main__":
-    test_ConvertDataFrame()
+    pass
+   #test_ConvertDataFrame()
     #test_MakeRadomDate()
     #test_MakeRandomIP()
     #test_AddSampleLogOperator()

@@ -81,21 +81,22 @@ class AddSampleLogOperator(BaseOperator):
         return sample["hits"]["hits"]
 
     def _preprocess_sample_data(self,data):
-        key_list = data[0].keys()
-        data = {"key_list":key_list}
+        key_list = list(data[0]["_source"].keys())
+        preprocess_data = {"key_list":key_list}
 
+        case_data = ConvertDataFrame(data).extract_case()
+        preprocess_data.setdefault("case_data",case_data)
 
-        
-        return 
+        return preprocess_data
 
     def _insert_sample_data_to_reids(self,data):
         self.redis_conn.set("sampe_{}".format(self._index_name),data)
         
 
     def execute(self, context: Context) -> Any:
-        sample_data = self._get_sample_data_from_es()
-        
-        self._insert_sample_data_to_reids(orjson.dumps(sample_data))
+        get_data = self._get_sample_data_from_es()
+        sample_case_data = self._preprocess_sample_data(get_data)
+        self._insert_sample_data_to_reids(orjson.dumps(sample_case_data))
 
 class ConvertDataFrame():
     def __init__(self,data):
@@ -106,13 +107,13 @@ class ConvertDataFrame():
     def extract_case(self):
         fileds = self._convert_data.columns
         case_data = {}
-        #print(fileds.to_list(self._convert_data.columns))
-        print(self._convert_data)
+        
+        
         for filed in fileds :
             if filed in ("_index","_id","s_IP","d_IP","@timestamp") or filed.startswith("UNKNOWN"):
                 continue
             else:
-                case_data.setdefault(filed,self._convert_data.groupby())
+                case_data.setdefault(filed,self._convert_data[filed].drop_duplicates().to_list())
         
         return case_data
 
