@@ -1,4 +1,6 @@
+import logging
 import os
+import string
 from typing import Any
 from airflow.models import BaseOperator
 from airflow.sensors.base import BaseSensorOperator, PokeReturnValue
@@ -8,20 +10,45 @@ from airflow.utils.decorators import apply_defaults
 from airflow.hooks.base import BaseHook
 import redis
 from airflow.models.connection import Connection
-import orjson,socket,random,struct,pandas
+import orjson,socket,random,struct,pandas,re
 from random import randrange
 from datetime import timedelta,datetime
 import numpy as np
+from elasticsearch import helpers
+
+IP_REGEX = re.compile(r"(\d+)[.](\d+)[.](\d+)[.](\d+)")
+
+
+def create_id( length_of_string: int) -> str:
+    """
+    bulk api 생성시 documnet 별로 id 값이 필요 해당 값은 중복될 수 없음으로 랜덤한 난수를 추출하여 bulk api 호출시 같이 호출되어 입력됨
+
+    args(int) :
+        length_of_string : 생성할 난수의 문자열 길이
+
+    returns :
+        숫자와 글자의 난수 조합(str)
+    """
+    return "".join(
+        random.choice(string.ascii_letters + string.digits) for _ in range(length_of_string)
+    )
+
+
 
 class GeneratorOperator(BaseOperator):
     def __init__(self,index_name:str,size:int,start_date:datetime,end_date:datetime,conn_id:str,**kwargs):
         super().__init__(**kwargs)
-        self._created_data = GenerateLogDatas(size=size,index_name=index_name,start_date=start_date,end_date=end_date)
+        self._index_name = index_name
+        self._created_datas = GenerateLogDatas(size=size,index_name=index_name,start_date=start_date,end_date=end_date).generate()
         self.es_conn = ElasticsearchHook(conn_id= conn_id or "local").get_conn()
-        
-    def execute(self):
+    
+    
+    def execute(self,context:Context):
+        data = [{"_index": self._index_name, "_id": create_id(19), "_source": data} for data in self._created_datas]
+
+        helpers.bulk(self.es_conn, data)
+        #AirflowLogging.info("Bulk API operation completed")
         #self.es_conn.bulk
-        pass
 
 
 class RedisHook(BaseHook):
@@ -53,7 +80,7 @@ class RedisSensorOperator(BaseSensorOperator):
         '''
         
         '''
-        #super().__init__(**kwargs)
+        super().__init__(**kwargs)
         self._index_name = index_name
         self.conn = RedisHook(db=1).get_conn()
     
@@ -86,7 +113,7 @@ class AddSampleLogOperator(BaseOperator):
             size(int): sample 데이터의 양
             conn_id(str): elasticsearch conntion 정보를 가져올 id
         '''
-        #super().__init__(**kwargs)
+        super().__init__(**kwargs)
         self._index_name = index_name
         self._size = size
         self.es_conn = ElasticsearchHook(conn_id= conn_id or "local").get_conn()
@@ -107,7 +134,7 @@ class AddSampleLogOperator(BaseOperator):
         return preprocess_data
 
     def _insert_sample_data_to_reids(self,data):
-        self.redis_conn.set("sampe_{}".format(self._index_name),data)
+        self.redis_conn.set("sample_{}".format(self._index_name),data)
         
 
     def execute(self, context: Context) :
@@ -144,7 +171,6 @@ class MakeRandomData():
 
     def __init__(self,index_name:str,start_date:datetime,end_date:datetime):
         self._index_name = index_name
-        self._redis_sample = RedisHook(1).get_conn().get("sampe_{}".format(self._index_name))
         self._start_date = start_date
         self._end_date = end_date       
 
@@ -153,9 +179,11 @@ class MakeRandomData():
         해당 클래스내의 내장 함수를 통해 랜덤 데이터를 생성합니다
         랜덤 데이터 생성 시 reids에 적재되어진 sample 내용을 참조하여 생성하게됩니다
         '''
+        self._redis_sample = orjson.loads(RedisHook(1).get_conn().get("sample_{}".format(self._index_name)))
         self._make_radom_IP()
         self._make_random_date()
-        return self._changeData()
+        
+        return self._change_data()
 
     def _make_radom_IP(self):
         if "s_IP" in self._redis_sample["key_list"] and "d_IP" in self._redis_sample["key_list"]:
@@ -167,18 +195,42 @@ class MakeRandomData():
     def _make_random_date(self):
         self.random_date = MakeRandomDate.random_date(self._start_date,self._end_date)
 
-    def _changeData(self):
+    def _change_data(self):
         data = {}
         for field in self._redis_sample["key_list"]:
             if field.startswith("UNKNOWN"):
-                data.setdefault(field,bytearray(os.urandom(1000000)))
-            elif field in ("_index","_id","s_IP","d_IP","@timestamp"):
+                data.setdefault(field,create_id(17))
+            elif field in ("_index","_id","s_IP","d_IP","host","@timestamp","timestamp"):
                 continue
             else:
-                random_value = np.random.choice(self._redis_sample["case_data"][field], size=1)
-                data.setdefault(field,random_value)
+                try:
+                    random_value = np.random.choice(self._redis_sample["case_data"][field])
+                except ValueError as e:
+                    random_value= self._redis_sample["case_data"][field][0]
+                finally:
+                    data.setdefault(field,random_value)
+
+        data = self._insert_random_date(data)
+        data = self._insert_random_IP(data)
+
         return data
-        
+    
+            
+    def _insert_random_IP(self,data):
+        if isinstance(self._random_ip,list):
+            s_IP, d_IP = self._random_ip
+            data.setdefault("s_IP",s_IP)
+            data.setdefault("d_IP",d_IP)
+        else:
+            data.setdefault("s_IP",self._random_ip)
+        return data
+
+    def _insert_random_date(self,data):
+        date_data = self.random_date.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]
+        data.setdefault("@timestamp",date_data)
+        data.setdefault("timesatmp",date_data)
+        return data
+
 class GenerateLogDatas(MakeRandomData):
     def __init__(self,size,**kwargs):
         self._size = size
@@ -186,7 +238,7 @@ class GenerateLogDatas(MakeRandomData):
         
     def generate(self):
         
-        generate_log = [self._changeData() for count in range(self._size)]
+        generate_log = [self.make_data() for count in range(self._size)]
         
         return generate_log
         
