@@ -1,0 +1,110 @@
+ {
+          "index_patterns": [
+            "iis_log*"
+          ],
+          "template": {
+            "settings": {
+              "index": {
+                "lifecycle": {
+                  "name": "iis_log",
+                  "rollover_alias": "iis_log"
+                },
+                "analysis": {
+                  "filter": {
+                    "1_2_ngram": {
+                      "min_gram": "1",
+                      "type": "ngram",
+                      "preserve_original": "true",
+                      "max_gram": "2"
+                    }
+                  },
+                  "analyzer": {
+                    "match_analyzer": {
+                      "filter": [
+                        "1_2_ngram",
+                        "lowercase"
+                      ],
+                      "tokenizer": "my_tokenizer"
+                    },
+                    "search_analyzer": {
+                      "filter": [
+                        "lowercase"
+                      ],
+                      "tokenizer": "my_tokenizer"
+                    }
+                  },
+                  "tokenizer": {
+                    "my_tokenizer": {
+                      "pattern": "",
+                      "type": "pattern"
+                    }
+                  }
+                },
+                "number_of_shards": "2",
+                "number_of_replicas": "1"
+              }
+            },
+            "mappings": {
+              "dynamic_templates": [],
+              "properties": {
+                "cs_method": {
+                  "type": "keyword"
+                },
+                "cs_user_agent": {
+                  "type": "text"
+                },
+                "s_IP": {
+                  "type": "ip"
+                },
+                "cs_uri_stem": {
+                  "type": "keyword"
+                },
+                "d_IP": {
+                  "type": "ip"
+                },
+                "d_port ": {
+                  "type": "long"
+                },
+                "cs_uri_query": {
+                  "type": "keyword"
+                },
+                "sc_status": {
+                  "type": "long"
+                },
+                "@timestamp": {
+                  "type": "date"
+                },
+                "s_sitename": {
+                  "type": "keyword"
+                },
+                "sc_substatus": {
+                  "type": "long"
+                },
+                "cs_username": {
+                  "type": "keyword"
+                },
+                "sc_win32_status": {
+                  "type": "long"
+                },
+                "event": {
+                  "type": "object",
+                  "properties": {
+                    "original": {
+                      "search_analyzer": "search_analyzer",
+                      "analyzer": "match_analyzer",
+                      "type": "text",
+                      "fields": {
+                        "keyword": {
+                          "ignore_above": 256,
+                          "type": "keyword"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "composed_of": [],
+          "priority": 1
+        }

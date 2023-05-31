@@ -1,0 +1,43 @@
+{
+      "policy": {
+        "phases": {
+          "warm": {
+            "min_age": "13h",
+            "actions": {
+              "set_priority": {
+                "priority": 50
+              }
+            }
+          },
+          "cold": {
+            "min_age": "1d",
+            "actions": {
+              "set_priority": {
+                "priority": 0
+              }
+            }
+          },
+          "hot": {
+            "min_age": "0ms",
+            "actions": {
+              "set_priority": {
+                "priority": 100
+              },
+              "rollover": {
+                "max_primary_shard_size": "50gb",
+                "max_age": "12h"
+              }
+            }
+          },
+          "delete": {
+            "min_age": "4d",
+            "actions": {
+              "delete": {
+                "delete_searchable_snapshot": true
+              }
+            }
+          }
+        }
+      }
+    }
+  

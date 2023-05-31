@@ -1,0 +1,263 @@
+{
+          "index_patterns": [
+            "ips*"
+          ],
+          "template": {
+            "settings": {
+              "index": {
+                "lifecycle": {
+                  "name": "ips",
+                  "rollover_alias": "ips"
+                },
+                "analysis": {
+                  "filter": {
+                    "1_2_ngram": {
+                      "min_gram": "1",
+                      "type": "ngram",
+                      "preserve_original": "true",
+                      "max_gram": "2"
+                    }
+                  },
+                  "analyzer": {
+                    "match_analyzer": {
+                      "filter": [
+                        "1_2_ngram",
+                        "lowercase"
+                      ],
+                      "tokenizer": "my_tokenizer"
+                    },
+                    "search_analyzer": {
+                      "filter": [
+                        "lowercase"
+                      ],
+                      "tokenizer": "my_tokenizer"
+                    }
+                  },
+                  "tokenizer": {
+                    "my_tokenizer": {
+                      "pattern": "",
+                      "type": "pattern"
+                    }
+                  }
+                },
+                "number_of_shards": "2",
+                "number_of_replicas": "1"
+              }
+            },
+            "mappings": {
+              "dynamic_templates": [],
+              "properties": {
+                "s_port": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "ignore_above": 256,
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "GID": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "ignore_above": 256,
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "s_IP": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "ignore_above": 256,
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "d_IP": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "ignore_above": 256,
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "priority": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "ignore_above": 256,
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "SID": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "ignore_above": 256,
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "d_port": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "ignore_above": 256,
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "tags": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "ignore_above": 256,
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "UNKNOWN1": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "ignore_above": 256,
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "hostname": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "ignore_above": 256,
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "protocol": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "ignore_above": 256,
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "@timestamp": {
+                  "type": "date"
+                },
+                "KUNKNOWN4": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "ignore_above": 256,
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "@version": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "ignore_above": 256,
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "host": {
+                  "type": "object",
+                  "properties": {
+                    "ip": {
+                      "type": "text",
+                      "fields": {
+                        "keyword": {
+                          "ignore_above": 256,
+                          "type": "keyword"
+                        }
+                      }
+                    }
+                  }
+                },
+                "tag": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "ignore_above": 256,
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "UNKNOWN3": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "ignore_above": 256,
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "event": {
+                  "type": "object",
+                  "properties": {
+                    "original": {
+                      "search_analyzer": "search_analyzer",
+                      "analyzer": "match_analyzer",
+                      "type": "text",
+                      "fields": {
+                        "keyword": {
+                          "ignore_above": 256,
+                          "type": "keyword"
+                        }
+                      }
+                    }
+                  }
+                },
+                "UNKNOWN2": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "ignore_above": 256,
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "class": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "ignore_above": 256,
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "descriptoin": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "ignore_above": 256,
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "snort": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "ignore_above": 256,
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "timestamp": {
+                  "type": "date"
+                }
+              }
+            }
+          },
+          "composed_of": [],
+          "priority": 1
+        }
+
