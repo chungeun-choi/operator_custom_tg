@@ -10,7 +10,7 @@ LOG_NAME = Variable.get("sample_log",deserialize_json=True)
 
 
 with DAG(
-    dag_id="Sample_log",
+    dag_id="Insert_sample_log",
     tags=["sample"],
     description="해당 DAG는 실행 시 최초에만 실행되면 Sample Log의 존재 유무를 판별하는 DAG입니다",
     schedule="@once",
