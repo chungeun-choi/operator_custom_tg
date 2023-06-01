@@ -77,9 +77,9 @@ def parameter(test=None,value=None,input=None):
 
 if __name__ == "__main__":
     #test_GeneratorOperator()
-    parameter(...,input="tests")
+    #parameter(...,input="tests")
     #test_GenerateLogDatas()
-    #test_MakeRandomData()
+    test_MakeRandomData()
     # list_d = [{"test1":"test_v"},{"test2":"test_v"},{"test3":"test_v"}]
     # print(np.random.choice(list_d))
     pass

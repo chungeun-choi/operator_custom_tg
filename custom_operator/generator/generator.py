@@ -3,7 +3,7 @@ import os
 import string
 from typing import Any
 from airflow.models import BaseOperator
-from airflow.sensors.base import BaseSensorOperator, PokeReturnValue
+from airflow.sensors.base import BaseSensorOperator
 from airflow.utils.context import Context
 from elastic.hook import ElasticsearchHook
 from airflow.utils.decorators import apply_defaults
@@ -179,10 +179,16 @@ class MakeRandomData():
     def make_data(self)->dict:
         '''
         해당 클래스내의 내장 함수를 통해 랜덤 데이터를 생성합니다
-        랜덤 데이터 생성 시 reids에 적재되어진 sample 내용을 참조하여 생성하게됩니다
+        랜덤 데이터 생성 시 reids에 적재되어진 sample 7 uen내용을 참조하여 생성하게됩니다
         '''
         if self._redis_sample is not None:
-            self._redis_sample = orjson.loads(self._redis_sample)
+            #value = orjson.dumps(self._redis_sample)
+            try:
+                self._redis_sample = orjson.loads(self._redis_sample)
+            except orjson.JSONDecodeError:
+                value = orjson.dumps(self._redis_sample)
+                self._redis_sample = orjson.loads(value)
+            #self._redis_sample = self._redis_sample
             
             self._make_radom_IP()
             self._make_random_date()
