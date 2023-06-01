@@ -8,16 +8,31 @@ from airflow.utils.task_group import TaskGroup
 CONNECTION = "docker_elastic"
 #LOG_NAME = Variable.get("sample_log",deserialize_json=True)
 
-test=UserInput(...)
+
+
+
+TEST_OBJ = UserInput(
+    index_name="waf",
+    query_type="sql",
+    query="SELECT * FROM waf",
+    datamart_name="test_obj_sql_1",
+    save_type="warehouse"
+)
+
+
+
 
 with DAG(
     dag_id="Make_datamart",
     tags=["datamart"],
     description="Varilable에 정의되어진 정보를 통해 dat awarehouse에서 data mart를 생성하는 DAG입니다",
     start_date = datetime(2022,5,28),
+    catchup=False
 ) as dag:
     make_datamart_task = MakeDataMartOperator(
         task_id ="make_data_task_",
-        input = test,
+        input = TEST_OBJ,
         conn_id=CONNECTION
     )
+
+make_datamart_task

@@ -1,10 +1,12 @@
+import logging
 from typing import Union
 from airflow.models import BaseOperator
 from elastic.hook import ElasticsearchHook
 from airflow.utils.context import Context
 from airflow.exceptions import AirflowException
-import pandas
+import pandas,orjson
 from generator.generator import create_id
+from airflow.utils.decorators import apply_defaults
 from elasticsearch import helpers
 
 class UserInput:
@@ -26,24 +28,31 @@ class UserInput:
 
 
 class MakeDataMartOperator(BaseOperator):
+
+    @apply_defaults
     def __init__(self,input:UserInput,conn_id:str = None,**kwargs):
+        super().__init__(**kwargs)
         self._input = input
         self._es_conn = ElasticsearchHook(conn_id= conn_id or "local").get_conn()
-        self._save_type = "json" if input._save_type == "warehouse" else input._save_type
+        self._save_type = input._save_type
 
     def _save(self):
         if self._save_type =="csv":
             self._make_csv()
+            logging.info("The requested action worked normally")
         elif self._save_type == "warehouse":
             self._make_index()
-        elif self._save_type == "warehouse":
-            self._make_dataframe()
+            logging.info("The requested action worked normally")
+        elif self._save_type == "dataframe":
+            return self._make_dataframe()
         else:
             AirflowException("Does not support")
 
     def _make_index(self):
-        json_datas = self._convert_dataframe().to_json()
-        index_rows = [{"_index": self._input._datamart_name, "_id": create_id(19), "_source": data} for data in json_datas]
+        json_datas = self._convert_dataframe().to_json(orient="records")
+        if json_datas is not None:
+            insert_data =  orjson.loads(json_datas)
+        index_rows = [{"_index": "data_mart_{}".format(self._input._datamart_name), "_id": create_id(19), "_source": data} for data in insert_data]
         
         helpers.bulk(self._es_conn, index_rows)
 
@@ -79,9 +88,8 @@ class MakeDataMartOperator(BaseOperator):
         return self.result
 
     def execute(self,context:Context):
-
         self.get_data()
-        self._save()
+        return self._save()
     
 
 

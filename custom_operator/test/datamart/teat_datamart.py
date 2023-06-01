@@ -12,7 +12,7 @@ TEST_OBJ = UserInput(
     query_type="sql",
     query="SELECT * FROM waf",
     datamart_name="test_obj_sql_1",
-    save_type="csv"
+    save_type="warehouse"
 )
 
 TEST_OBJ2 = UserInput(
@@ -43,18 +43,19 @@ def test_MakeDataMartOperator():
         "conn_id":"docker_elastic"
     }
     
-    # obj = MakeDataMartOperator(**input)
+    obj = MakeDataMartOperator(**input)
+    obj.execute(context=None)
     # value = obj.get_data()
     # print("test")
 
     # convert = obj._convert_dataframe(value)
     # print(convert)
 
-    obj2 =  MakeDataMartOperator(**input2)
-    value2= obj2.get_data()
+    # obj2 =  MakeDataMartOperator(**input2)
+    # value2= obj2.get_data()
 
-    convert = obj2._convert_dataframe(value2)
-    print(convert)
+    # convert = obj2._convert_dataframe(value2)
+    # print(convert)
     pass
 
 
