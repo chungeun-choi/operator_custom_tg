@@ -22,18 +22,21 @@ with DAG(
             check_sample_log = CheckSensorOperator(
                 task_id= "check_sensor_task_{}".format(log),
                 conn_id=CONNECTION,
-                log_name=log
+                log_name=log,
+                timeout = 10,
+                soft_fail=True
             )
             make_index= MakeIndexOperator(
                 task_id= "make_index_{}".format(log),
                 conn_id=CONNECTION,
+                trigger_rule ="all_success" ,
                 index_name=log
             )
             insert_sample_data = InsertOperator(
                 task_id="insert_sample_data_{}".format(log),
                 conn_id=CONNECTION,
                 log_name=log,
-                trigger_rule = "always"
+                trigger_rule = "none_failed"
         )
 
         check_sample_log >> make_index >> insert_sample_data
