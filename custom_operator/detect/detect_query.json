@@ -1,0 +1,23 @@
+{
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "now-1m",
+                "lte": "now"
+              }
+            }
+          }
+        ],
+        "must": [
+          {
+            "regexp": {
+              "s_IP.keyword": "10.44.44.*"
+            }
+          }
+        ]
+      }
+    }
+  }
