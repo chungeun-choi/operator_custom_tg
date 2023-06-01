@@ -71,9 +71,13 @@ def test_GeneratorOperator():
     }
     GeneratorOperator(**test_params).execute()
 
+def parameter(test=None,value=None,input=None):
+    print(test,value,input)
+
 
 if __name__ == "__main__":
-    test_GeneratorOperator()
+    #test_GeneratorOperator()
+    parameter(...,input="tests")
     #test_GenerateLogDatas()
     #test_MakeRandomData()
     # list_d = [{"test1":"test_v"},{"test2":"test_v"},{"test3":"test_v"}]

@@ -36,6 +36,7 @@ def create_id( length_of_string: int) -> str:
 
 
 class GeneratorOperator(BaseOperator):
+    @apply_defaults
     def __init__(self,index_name:str,size:int,start_date:datetime,end_date:datetime,conn_id:str,**kwargs):
         super().__init__(**kwargs)
         self._index_name = index_name
@@ -105,7 +106,7 @@ class AddSampleLogOperator(BaseOperator):
     redis에 적재되어진 sample 데이터가 없을 경우 elasticsearch에서 데이터를 가져와
     적재합니다
     '''
-
+    @apply_defaults
     def __init__(self,index_name:str,size:int,conn_id,**kwargs):
         '''
         params:
@@ -172,18 +173,21 @@ class MakeRandomData():
     def __init__(self,index_name:str,start_date:datetime,end_date:datetime):
         self._index_name = index_name
         self._start_date = start_date
-        self._end_date = end_date       
+        self._end_date = end_date     
+        self._redis_sample = RedisHook(1).get_conn().get("sample_{}".format(self._index_name))  
 
     def make_data(self)->dict:
         '''
         해당 클래스내의 내장 함수를 통해 랜덤 데이터를 생성합니다
         랜덤 데이터 생성 시 reids에 적재되어진 sample 내용을 참조하여 생성하게됩니다
         '''
-        self._redis_sample = orjson.loads(RedisHook(1).get_conn().get("sample_{}".format(self._index_name)))
-        self._make_radom_IP()
-        self._make_random_date()
-        
-        return self._change_data()
+        if self._redis_sample is not None:
+            self._redis_sample = orjson.loads(self._redis_sample)
+            
+            self._make_radom_IP()
+            self._make_random_date()
+            
+            return self._change_data()
 
     def _make_radom_IP(self):
         if "s_IP" in self._redis_sample["key_list"] and "d_IP" in self._redis_sample["key_list"]:
