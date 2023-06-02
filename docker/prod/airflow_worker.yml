@@ -35,7 +35,7 @@ x-airflow-common:
     - ../../logs:/opt/airflow/logs
     - ../../plugins:/opt/airflow/plugins
     - ${AIRFLOW_PROJ_DIR:-.}/sample_data:/opt/airflow/dags/sample_data
-    - ../ImportJsonFile:/ImportJsonFile
+    - ../import_json:/ImportJsonFile
   #user: "${AIRFLOW_UID:-0}:0"  
   user: "${AIRFLOW_UID:-50000}:0"
 
