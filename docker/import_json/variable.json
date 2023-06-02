@@ -1,0 +1,21 @@
+{
+    "datamart_lsit": {
+        "datamart_name": "iils_log_aggs_from_minute",
+        "index_name": "iis_log",
+        "query": "SELECT * FROM iis_log",
+        "query_type": "SQL",
+        "save_type": "warerhouse"
+    },
+    "detect_rule": {
+        "_detection_target": {
+            "s_IP": "10.44.44*"
+        },
+        "_frequency": 5,
+        "_interval": 5
+    },
+    "sample_log": [
+        "iis_log",
+        "ips",
+        "waf"
+    ]
+}

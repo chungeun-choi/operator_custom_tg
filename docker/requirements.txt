@@ -1,0 +1,7 @@
+pytest
+black
+jsonpath_ng
+pika
+orjson
+elasticsearch-dsl
+elasticsearch-dsl7
