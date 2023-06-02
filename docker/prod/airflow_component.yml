@@ -33,7 +33,7 @@ x-airflow-common:
     AIRFLOW__WEBSERVER__WORKERS: 2
     
   volumes:
-    - ${AIRFLOW_PROJ_DIR:-.}/custom_operator:/opt/airflow/dags
+    - ../../custom_operator:/opt/airflow/dags
     - ../../logs:/opt/airflow/logs
     - ../../plugins:/opt/airflow/plugins
     - ${AIRFLOW_PROJ_DIR:-.}/sample_data:/opt/airflow/dags/sample_data
