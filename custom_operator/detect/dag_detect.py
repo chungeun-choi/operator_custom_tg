@@ -1,8 +1,13 @@
 from detect.detect import DetectSensorOperator,UserDetectInput
 from airflow import DAG
 from datetime import datetime
+from path import DEFAULT_PATH
 
 CONNECTION = "docker_elastic"
+DESCRIPTION = ''''''
+
+with open(DEFAULT_PATH+"/dag_description/dag_detect/DAG-Detect_data_by_using_userInput.md","r") as file:
+    DESCRIPTION = file.read()
 
 test_obj= UserDetectInput(
     detection_target={
@@ -14,6 +19,7 @@ test_obj= UserDetectInput(
 
 with DAG(
     dag_id= "Detect_data_by_using_userInput",
+    doc_md= DESCRIPTION,
     description= "사용자가 등록한 특정 문자열이 데이터웨어하우스에서 조회 되었을 경우 탐지하고 알림 및 다음 액션을 진행하는 dag입니다",
     catchup=False,
     tags=["detecttor"],
