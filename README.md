@@ -1,4 +1,4 @@
-# TG-Cloud-Bigdata 프로젝트 개선사항 - Airflow 커스텀 오퍼레이터 
+# Airflow 커스텀 오퍼레이터 
 
 # SAMPLE 보는 법
 
