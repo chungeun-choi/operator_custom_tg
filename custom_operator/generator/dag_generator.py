@@ -47,8 +47,8 @@ with DAG(
                 size=10,
                 conn_id=CONNECTION,
                 trigger_rule="none_failed",
-                start_date=datetime(2023,5,31,13,30,30),
-                end_date=datetime(2023,5,31,13,31,35)
+                start_date=datetime.fromisoformat('{{execution_date}}'),
+                end_date=datetime.fromisoformat("{{next_execution_date}}")
             )
 
         redis_sensor_task >> add_sample_task

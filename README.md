@@ -1,5 +1,29 @@
 # TG-Cloud-Bigdata 프로젝트 개선사항 - Airflow 커스텀 오퍼레이터 
 
+# SAMPLE 보는 법
+
+### 접속 정보
+
+- HOST:
+- AUTH:
+    
+     - Airflow: test (ID),  test123! (password)
+    
+     - Grafana: 
+    
+
+### login 및 DAG desciprtion 보는 방법
+
+- login
+
+    ![logins](https://github.com/cucuridas/operator_custom_tg/assets/65060314/63cd8b87-fc0e-4e50-98d8-b763bea5502b)
+
+- DAG desciption 보는 방법
+    
+    ![Jun-05-2023 17-25-13](https://github.com/cucuridas/operator_custom_tg/assets/65060314/8c87d151-abfd-4e8f-b78d-eb37c8904865)
+
+<br>
+
 # Custom operator 만드는법
 
 [ ‘Data Pipelines with Apache Airflow’ 내용을 통해 커스텀 오퍼레이터 만들기](READBOOKS.md)
