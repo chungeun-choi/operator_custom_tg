@@ -4,7 +4,7 @@
 
 ### 접속 정보
 
-- HOST: [Airflow-test-lab](airflow.cucuridas.info:28080), [Data visualizing - grafana](grafana.cucuridas.info:3000)
+- HOST: [Airflow-test-lab](http://airflow.cucuridas.info:28080/login/?next=http%3A%2F%2Fairflow.cucuridas.info%3A28080%2Fhome) , [Data visualizing - grafana](https://grafana.cucuridas.info:3000)
 - AUTH:
     
      - Airflow: test (ID),  test123! (password)
