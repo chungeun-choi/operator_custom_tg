@@ -10,6 +10,11 @@ LOG_NAME = Variable.get("sample_log",deserialize_json=True)
 
 DESCRIPTION = ''''''
 
+try:
+    size = Variable.get("Generate_log_counter")
+except: 
+    size = 50
+
 with open(DEFAULT_PATH+"/dag_description/dag_gerator/DAG-Generate_sample_log.md","r") as file:
     DESCRIPTION = file.read()
 
@@ -44,7 +49,7 @@ with DAG(
             generate_log_task = GeneratorOperator(
                 task_id = "Generate_log_from_{}".format(log),
                 index_name = log,
-                size=10,
+                size=size,
                 conn_id=CONNECTION,
                 trigger_rule="none_failed",
                 #start_date=datetime.fromisoformat('{{execution_date}}'),

@@ -269,12 +269,10 @@ class MakeRandomDate:
         """
         시작날짜와 종료날짜를 입력받아 랜덤한 날짜를 전달하는 함수입니다
         """
-        print("이거 출력",start,end)
         delta = end - start
         if delta == 0 :
             AirflowException("The same thing is the same")
         int_delta = (delta.days * 24 * 60 * 60) + delta.seconds
-        print("이거 출력",int_delta)
         random_second = randrange(int_delta)
         return start + timedelta(seconds=random_second)
 
