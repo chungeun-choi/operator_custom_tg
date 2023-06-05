@@ -11,7 +11,7 @@ LOG_NAME = Variable.get("sample_log",deserialize_json=True)
 DESCRIPTION = ''''''
 
 try:
-    size = Variable.get("Generate_log_counter")
+    size = Variable.get("log_size",deserialize_json=True)
 except: 
     size = 50
 
