@@ -28,7 +28,14 @@ services:
     depends_on: 
       - elasticsearch_sigle_node
 
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - 3000:3000
 
+    depends_on: 
+      - elasticsearch_sigle_node
       
     # volumes:
     #   #- ../../config/single:/usr/share/elasticsearch/config
