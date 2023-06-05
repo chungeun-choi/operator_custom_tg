@@ -1,6 +1,6 @@
 # Airflow 커스텀 오퍼레이터 
 
-# SAMPLE 보는 법
+## SAMPLE 보는 법
 
 ### 접속 정보
 
@@ -24,7 +24,7 @@
 
 <br>
 
-# Airflow local 실행 방법
+## Airflow local 실행 방법
 
 ### 1) docker 설치(docker-compose 포함)
 
@@ -67,7 +67,7 @@ docker-compose up -d
 
 <br>
 
-# 참조 내용
+## 참조 내용
 
 [ ‘Data Pipelines with Apache Airflow’ 내용을 통해 커스텀 오퍼레이터 만들기](READBOOKS.md)
 
