@@ -33,6 +33,7 @@ x-airflow-common:
     AIRFLOW__WEBSERVER__WORKERS: 2
     
   volumes:
+    - ../../config:/opt/airflow/config
     - ../../custom_operator:/opt/airflow/dags
     - ../../logs:/opt/airflow/logs
     - ../../plugins:/opt/airflow/plugins
