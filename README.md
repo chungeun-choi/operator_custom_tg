@@ -24,13 +24,7 @@
 
 <br>
 
-# Custom operator 만드는법
-
-[ ‘Data Pipelines with Apache Airflow’ 내용을 통해 커스텀 오퍼레이터 만들기](READBOOKS.md)
-
-</br>
-
-# Airflow 실행 방법
+# Airflow local 실행 방법
 
 ### 1) docker 설치(docker-compose 포함)
 
@@ -46,6 +40,8 @@
 
 ### 2) Elasticsearch container 생성
 
+<span style="color:red"> './docker/dev/' 디렉토리에 관련 yaml파일이 존재합니다</sapn>
+
 ***해당 yaml 파일에는 kibana도 포함되어져 있습니다** 
 
 elasticsearch : localhost:9200
@@ -58,6 +54,7 @@ docker-compose -f elasticsearch.yaml up -d
 </br> 
 
 ### 3) Airflow container 생성
+<span style="color:red"> './docker/dev/' 디렉토리에 관련 yaml파일이 존재합니다</sapn>
 
 Airflow-webserver: localhost:8080
 
@@ -66,3 +63,12 @@ docker-compose up -d
 ```
 
 <img width="907" alt="image" src="https://github.com/cucuridas/operator_custom_tg/assets/65060314/92ecfa81-40c8-4563-b300-8216796bcae6">
+
+
+<br>
+
+# 참조 내용
+
+[ ‘Data Pipelines with Apache Airflow’ 내용을 통해 커스텀 오퍼레이터 만들기](READBOOKS.md)
+
+</br>
