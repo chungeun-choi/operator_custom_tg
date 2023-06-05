@@ -48,6 +48,7 @@ table td {
 ### 1) Variable 값 정의
 해당 ‘Variables’의 값은 'Insert_sample_log' 와 공유합니다.a
 내용에서 설정해주어야할 Variable의 값은 'sample_log'와 'log_size'입니다
+
 <img width="842" alt="generator_op" src="https://github.com/cucuridas/operator_custom_tg/assets/65060314/2e748dc2-b300-4500-b9a0-5d9069926d8e">
 
 ```c
