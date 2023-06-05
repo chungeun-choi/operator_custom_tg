@@ -18,7 +18,7 @@ with DAG(
     doc_md = DESCRIPTION,
     description="redis에 적재되어진 sample log 데이터를 통해서 log 데이터를 새로 생성하여 증분합니다",
     #schedule="@minute"
-    #schedule_interval="@dayily",
+    schedule_interval="*/1 * * * *",
     catchup=False,
     tags=["generator"],
     start_date =datetime(2022,5,28)
@@ -29,7 +29,7 @@ with DAG(
             redis_sensor_task = RedisSensorOperator(
                 task_id = "Check_redis_sensor_to_{}".format(log),
                 index_name= log,
-                timeout= 10,
+                timeout= 2,
                 soft_fail=True
             )
 
@@ -47,8 +47,8 @@ with DAG(
                 size=10,
                 conn_id=CONNECTION,
                 trigger_rule="none_failed",
-                start_date=datetime.fromisoformat('{{execution_date}}'),
-                end_date=datetime.fromisoformat("{{next_execution_date}}")
+                #start_date=datetime.fromisoformat('{{execution_date}}'),
+                #end_date=datetime.fromisoformat("{{next_execution_date}}")
             )
 
         redis_sensor_task >> add_sample_task

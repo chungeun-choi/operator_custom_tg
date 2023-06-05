@@ -10,11 +10,12 @@ from airflow.utils.decorators import apply_defaults
 from airflow.hooks.base import BaseHook
 import redis
 from airflow.models.connection import Connection
-import orjson,socket,random,struct,pandas,re
+import orjson,socket,random,struct,pandas,re,pendulum
 from random import randrange
 from datetime import timedelta,datetime
 import numpy as np
 from elasticsearch import helpers
+from airflow.exceptions import AirflowException
 
 IP_REGEX = re.compile(r"(\d+)[.](\d+)[.](\d+)[.](\d+)")
 
@@ -37,14 +38,23 @@ def create_id( length_of_string: int) -> str:
 
 class GeneratorOperator(BaseOperator):
     @apply_defaults
-    def __init__(self,index_name:str,size:int,start_date:datetime,end_date:datetime,conn_id:str,**kwargs):
+    def __init__(self,index_name:str,size:int,conn_id:str,start_date:datetime=None,end_date:datetime=None,**kwargs):
         super().__init__(**kwargs)
         self._index_name = index_name
-        self._created_datas = GenerateLogDatas(size=size,index_name=index_name,start_date=start_date,end_date=end_date).generate()
+        self._size = size
+        self._start_date = start_date
+        self._end_date = end_date
         self.es_conn = ElasticsearchHook(conn_id= conn_id or "local").get_conn()
     
     
     def execute(self,context:Context):
+        print(context)
+        self._created_datas = GenerateLogDatas(
+            size=self._size,
+            index_name=self._index_name,
+            start_date=self._start_date or datetime.fromtimestamp(context["execution_date"].timestamp(),pendulum.tz.UTC),
+            end_date=self._end_date or datetime.fromtimestamp(context["next_execution_date"].timestamp(),pendulum.tz.UTC)
+            ).generate()
         data = [{"_index": self._index_name, "_id": create_id(19), "_source": data} for data in self._created_datas]
 
         helpers.bulk(self.es_conn, data)
@@ -259,8 +269,12 @@ class MakeRandomDate:
         """
         시작날짜와 종료날짜를 입력받아 랜덤한 날짜를 전달하는 함수입니다
         """
+        print("이거 출력",start,end)
         delta = end - start
+        if delta == 0 :
+            AirflowException("The same thing is the same")
         int_delta = (delta.days * 24 * 60 * 60) + delta.seconds
+        print("이거 출력",int_delta)
         random_second = randrange(int_delta)
         return start + timedelta(seconds=random_second)
 
