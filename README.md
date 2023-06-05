@@ -9,7 +9,7 @@
     
      - Airflow: test (ID),  test123! (password)
     
-     - Grafana: 
+     - Grafana: test_user (ID), test123! (password)
     
 
 ### login 및 DAG desciprtion 보는 방법
