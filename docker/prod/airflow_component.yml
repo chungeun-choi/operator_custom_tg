@@ -24,6 +24,11 @@ x-airflow-common:
     AIRFLOW__SCHEDULER__SCHEDULER_HEALTH_CHECK_THRESHOLD: 3000
     AIRFLOW__CELERY_BROKER_TRANSPORT_OPTIONS__VISIBILITY_TIMEOUT: 216000
     AIRFLOW__SCHEDULER__ALLOW_TRIGGER_IN_FUTURE: 'true'
+    AIRFLOW__SMTP__SMTP_HOST: 'smtp.naver.com'
+    AIRFLOW__SMTP__SMTP_USER: '3310223'
+    AIRFLOW__SMTP__SMTP_PASSWORD: $EMAIL_PASSWORD
+    AIRFLOW__SMTP__SMTP_PORT: 587
+    AIRFLOW__SMTP__SMTP_MAIL_FROM: $EMAIL_ADDRESS
     AIRFLOW__WEBSERVER__SECRET_KEY: $AIRFLOW_SECRET_KEY
     AIRFLOW__WEBSERVER__SECRET_KEY_SECRET: $AIRFLOW_SECRET_KEY
     AIRFLOW__LOGGING__REMOTE_LOGGING: 'false'
@@ -37,6 +42,7 @@ x-airflow-common:
     - ../../custom_operator:/opt/airflow/dags
     - ../../logs:/opt/airflow/logs
     - ../../plugins:/opt/airflow/plugins
+    - ../../add:/opt/airflow/add
     - ../../sample_data:/opt/airflow/dags/sample_data
     - ../import_json:/ImportJsonFile
   #user: "${AIRFLOW_UID:-0}:0"  
