@@ -8,16 +8,18 @@ import pandas,orjson,json
 from generator.generator import create_id
 from airflow.utils.decorators import apply_defaults
 from elasticsearch import helpers
-
+from datetime import datetime
+from typing import Optional
 class UserInput:
     #index_name,type,query(dsl, sql), data_mart 이름,저장방식
     def __init__(self,
-    index_name: str,
+
     query_type: str ,
     query: Union[str,dict],
     datamart_name: str,
     save_type: str,
-    email:str = None
+    email:Optional[str]= None,
+    index_name: Optional[str]= None,
     ):
         self._index_name = index_name
         self._query_type = query_type
@@ -76,11 +78,12 @@ class MakeDataMartOperator(BaseOperator):
 
 
 class SaveElasticsearchOperator(BaseOperator):
-    def __init__(self,data_mart_name,conn_id:str=None,prev_task_id:str = None,**kwargs):
+    def __init__(self,data_mart_name,conn_id:str=None,date:datetime=None,prev_task_id:str = None,**kwargs):
         super().__init__(**kwargs)
         self._es_conn = ElasticsearchHook(conn_id= conn_id or "local").get_conn()
         self._task_id = prev_task_id
         self._data_mart =  data_mart_name
+        self._datetime = date
         
     def _make_index(self,dataframe:json):
         data = pandas.DataFrame(orjson.loads(dataframe))
@@ -93,6 +96,6 @@ class SaveElasticsearchOperator(BaseOperator):
 
     def execute(self,context:Context):
         text = context['task_instance'].xcom_pull(task_ids=self._task_id)
-        print("이거 타입",type(text))
+        #print("이거 타입",type(text))
         self._make_index(dataframe=text,)
         

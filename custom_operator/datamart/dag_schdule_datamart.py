@@ -1,4 +1,4 @@
-from datamart.datamart import UserInput, MakeDataMartOperator
+from datamart.datamart import UserInput, MakeDataMartOperator,SaveElasticsearchOperator
 from airflow import DAG 
 from datetime import datetime
 from airflow.models.variable import Variable
@@ -24,23 +24,25 @@ with DAG(
     schedule_interval="*/1 * * * *",
     catchup=False,
     params={
-        # an int with a default value
         "index_name": Param("iis_log",description="찾고자 하는 값이 존재하는 Index의 이름입니다" ,type="string"),
-
         "query_type": Param("dsl", enum=["sql", "dsl"]),
-
-        # an enum param, must be one of three values
         "query": Param("foo", type=["array", "string"]),
         "datamart_name": Param("data_mart_iis_log_rule1",type="string"),
-        "save_type": Param("warehouse",enum=["csv", "warehouse","dataframe"])
-        # a param which uses json-schema formatting
+    
     }
 ) as dag:
     for value in Variable.get("datamart_lsit",deserialize_json=True):
         make_datamart_task = MakeDataMartOperator(
-            task_id ="make_data_task_",
-            input = UserInput(**value),
+            task_id ="make_data_task_{}".format(value["datamart_name"]),
+            input = UserInput(save_type="warehouse",**value),
             conn_id=CONNECTION
         )
+        
+        save_elasticsearch_task = SaveElasticsearchOperator(
+            task_id = "save_elasticsearch_task",
+            conn_id=CONNECTION,
+            prev_task_id="make_data_task_{}".format(value["datamart_name"]),
+            data_mart_name=value["datamart_name"]
+        )
 
-        make_datamart_task
+    make_datamart_task >> save_elasticsearch_task
