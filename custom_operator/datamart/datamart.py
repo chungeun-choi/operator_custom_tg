@@ -4,7 +4,7 @@ from airflow.models import BaseOperator
 from elastic.hook import ElasticsearchHook
 from airflow.utils.context import Context
 from airflow.exceptions import AirflowException
-import pandas,orjson
+import pandas,orjson,json
 from generator.generator import create_id
 from airflow.utils.decorators import apply_defaults
 from elasticsearch import helpers
@@ -17,13 +17,16 @@ class UserInput:
     query: Union[str,dict],
     datamart_name: str,
     save_type: str,
+    email:str = None
     ):
         self._index_name = index_name
         self._query_type = query_type
         self._query = query
         self._datamart_name = datamart_name
         self._save_type = save_type
-
+        if save_type == "csv" and email == None:
+            AirflowException("Email information is required if 'save_type' is 'csv'. Define the parameter value using the 'email' key")
+            
 
 
 
@@ -35,33 +38,12 @@ class MakeDataMartOperator(BaseOperator):
         self._input = input
         self._es_conn = ElasticsearchHook(conn_id= conn_id or "local").get_conn()
         self._save_type = input._save_type
-
-    def _save(self):
-        if self._save_type =="csv":
-            self._make_csv()
-            logging.info("The requested action worked normally")
-        elif self._save_type == "warehouse":
-            self._make_index()
-            logging.info("The requested action worked normally")
-        elif self._save_type == "dataframe":
-            return self._make_dataframe()
-        else:
-            AirflowException("Does not support")
-
-    def _make_index(self):
-        json_datas = self._convert_dataframe().to_json(orient="records")
-        if json_datas is not None:
-            insert_data =  orjson.loads(json_datas)
-        index_rows = [{"_index": "data_mart_{}".format(self._input._datamart_name), "_id": create_id(19), "_source": data} for data in insert_data]
         
-        helpers.bulk(self._es_conn, index_rows)
 
     def _make_csv(self):
         self._convert_dataframe()
         self.convert_data.to_csv("./{}.csv".format(self._input._datamart_name))
-        
-    def _make_dataframe(self):
-        return self._convert_dataframe()
+    
 
 
     def _convert_dataframe(self):
@@ -89,8 +71,28 @@ class MakeDataMartOperator(BaseOperator):
 
     def execute(self,context:Context):
         self.get_data()
-        return self._save()
+        return self._convert_dataframe().to_json()
     
 
 
-    
+class SaveElasticsearchOperator(BaseOperator):
+    def __init__(self,data_mart_name,conn_id:str=None,prev_task_id:str = None,**kwargs):
+        super().__init__(**kwargs)
+        self._es_conn = ElasticsearchHook(conn_id= conn_id or "local").get_conn()
+        self._task_id = prev_task_id
+        self._data_mart =  data_mart_name
+        
+    def _make_index(self,dataframe:json):
+        data = pandas.DataFrame(orjson.loads(dataframe))
+        json_datas = data.to_json(orient="records")
+        if json_datas is not None:
+            insert_data =  orjson.loads(json_datas)
+        index_rows = [{"_index": self._data_mart, "_id": create_id(19), "_source": data} for data in insert_data]
+        
+        helpers.bulk(self._es_conn, index_rows)
+
+    def execute(self,context:Context):
+        text = context['task_instance'].xcom_pull(task_ids=self._task_id)
+        print("이거 타입",type(text))
+        self._make_index(dataframe=text,)
+        
