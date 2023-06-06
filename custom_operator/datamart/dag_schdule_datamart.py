@@ -10,7 +10,7 @@ CONNECTION = "docker_elastic"
 #LOG_NAME = Variable.get("sample_log",deserialize_json=True)
 DESCRIPTION = ''''''
 
-with open(DEFAULT_PATH+"/dag_description/dag_datamart/DAG-Make_datamart.md","r") as file:
+with open(DEFAULT_PATH+"/dag_description/dag_datamart/DAG-Make_datamart_scheduling.md","r") as file:
     DESCRIPTION = file.read()
 
 

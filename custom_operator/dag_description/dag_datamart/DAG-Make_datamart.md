@@ -28,41 +28,27 @@ table td {
 }
 </style>
 
-
 # DAG -  Make_datamart
 
 ## 내용
-----
 
 해당 DAG는 Elasticsearch에 적재되어진 Index를 통해 사용자의 목적에 맞는 데이터 마트를 생성하기위한 DAG입니다 SQL query와 DSL query를 지원합니다
 
 key `save_type` 의 value 값을 통해 저장 방식을 지원합니다 현재 저장방식은 ‘csv’와 , ‘warehouse(저장소 현재는 elasticsearch)’입니다
 
-</br>
-
 ## 사용법
----
 
-### 1) Variable 값 정의
+### 1) DAG trigger를 통해 실행
 
-<img width="845" alt="image" src="https://github.com/cucuridas/operator_custom_tg/assets/65060314/e1440336-271c-4d0f-a804-0b2fa8590ee3">
+![trigger_on](https://github.com/cucuridas/operator_custom_tg/assets/65060314/586f6c5c-ad49-41bf-b1af-8db10982818f)
 
-```c
-1. 상단의 메뉴바에서 'Admin' 클릭
-2. 'Admin' 하위 메뉴에서 'Variables' 클릭
-3. '+' 버튼을 눌러 'datamart_list' 새롭게 생성, 'datamart_list'가 생성되어져 있을 경우 수정 버튼을 눌러 변경
-4. key, value를 통해 데이터 정의 *key의 이름은 'datamart_list' 고정
-```
+![trigger_input](https://github.com/cucuridas/operator_custom_tg/assets/65060314/a27e7dea-eaaa-4404-8ab4-b76ae4a7844f)
 
-### 2) Operator 객체 생성하여 파라미터 정의
+![input_value](https://github.com/cucuridas/operator_custom_tg/assets/65060314/23164263-ded4-4c2e-8550-f8c80b884983)
 
-- 각 operator 파라미터 내용 (BaseOperator 내용은 생략되어 있습니다)
+![trigger_button](https://github.com/cucuridas/operator_custom_tg/assets/65060314/4d98ef7f-bc26-4275-ada1-032f229c5099)
 
-| Operator name | description | parameter description |
-| --- | --- | --- |
-| MakeDataMartOperator(BaseOperator) | ‘Variables’의 key ‘datamart_list’ 의 값을 받아와 데이터 마트를 생성합니다 | input(UserInput): datamart에서 사용하게 될 사용자의 입력 객체를 전달 받습니다 <br /> conn_id(str):‘connection’에 등록되어진 elasticsearch 연결 정보 |
-
-- **Variables 데이터 형태 (json) - UserInput(class)**
+### 3) 파라미터 값 내용
 
 | class.attribute | description | type |
 | --- | --- | --- |
@@ -71,16 +57,19 @@ key `save_type` 의 value 값을 통해 저장 방식을 지원합니다 현재 
 | query | 조회 시 사용하게될 query를 입력 받습니다 query_type이 sql 일 경우 str타입을, dsl일 경우 dict 타입의 데이터를 입력받습니다 | dict,str |
 | datamart_name | 새로 생성하게되는 data mart의 이름을지정합니다 | str |
 | save_type | 저장하고자하는 타입을 입력합니다 (현재 csv와 data warehouse 두가지 방식을 지원합니다) | str (csv or warehouse) |
-
-<br/>
+| email | save_type 의 값이 csv일 경우 만들어진 csv 파일을 해당 값으로 정의되어진 email 주소로 전달되게 됩니다 | str |
 
 ## TASK
----
 
-<img width="346" alt="image" src="https://github.com/cucuridas/operator_custom_tg/assets/65060314/98475698-0344-4a9d-9cc2-a196d5cee47f">
+![task_data_mart](https://github.com/cucuridas/operator_custom_tg/assets/65060314/12ae896c-1ae2-4c61-8b14-c92e8e331e65)
 
-총 1개의 task를 가지고 있으며 task는 아래의 표를 참고
+총 6개의 task를 가지고 있으며 task는 아래의 표를 참고
 
-| task name | Using operator |
-| --- | --- |
-| make_data_task_{data mart rule name} | MakeDataMartOperator(BaseOperator) |
+| task name | Using operator | desciption |
+| --- | --- | --- |
+| make_data_mart_task | MakeDataMartOperator(BaseOperator) | Elasticsearch에 API를 호출하여 결과를 조회해온 뒤 데이터 프레임으로 변환합니다 |
+| check_save_type | BranchPythonOperator | 입력받은 params의 값을 통해 저장 타입을 확인합니다 (현재 csv와 warehouse를 지원합니다) |
+| make_csv_file | PythonOperator | params[”save_type”]이 ‘csv’ 일 경우 실행 되며 만들어진 데이터 프레임을 csv 형태로 저장합니다 |
+| save_elasticsearch | SaveElasticsearchOperator(BaseOperator) | params[”save_type”]이 ‘warehouse’ 일 경우 실행 되며 만들어진 데이터 프레임을 csv 형태로 저장합니다 |
+| send_email_with_datamart_csv | EmailOperator | 만들어진 csv 파일을 params[”email”] 값으로 전송합니다 |
+| delete_csv_file | PythonOperator | 기존의 만들어진 csv 파일을 삭제합니다 |

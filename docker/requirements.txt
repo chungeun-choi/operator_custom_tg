@@ -5,3 +5,4 @@ pika
 orjson
 elasticsearch-dsl
 elasticsearch-dsl7
+selenium
