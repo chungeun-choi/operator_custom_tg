@@ -1,1 +1,1 @@
-DEFAULT_PATH ="/opt/airflow/dags/"
+DEFAULT_PATH = "/opt/airflow/dags/"

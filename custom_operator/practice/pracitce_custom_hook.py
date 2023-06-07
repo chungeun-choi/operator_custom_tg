@@ -31,7 +31,7 @@ class MovielensHook(BaseHook):
             self.session.auth = (config.login, config.password)
 
         return self.session, self.base_url
-    
+
     # 조회되는 데이터의 양이 많을 경우 페이징을 통해 데이터를 나누는 작업을 진행하도록 합니다
     def _get_with_paginations(self, endpoint, params, batch_size=100):
         session, base_url = self.get_conn()
