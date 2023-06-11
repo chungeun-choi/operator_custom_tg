@@ -6,7 +6,7 @@ DASHBOARD_UIALERTS = [
     # UIAlert('<h4>Topology 정보입니다<h4>  <img src="https://user-images.githubusercontent.com/65060314/243423544-86ecfc8f-a935-4741-ac6a-0b959536acbc.png" alt="My Image">' , html=True),
     UIAlert(
         Markup(
-            '<h4>Topology 정보<h4>  <img src="https://user-images.githubusercontent.com/65060314/243426199-c476b33b-7742-4f73-970a-d0512458ee3c.png" alt="My Image">'
+            '<h4>Topology 정보<h4>  <img src="https://user-images.githubusercontent.com/65060314/243426199-c476b33b-7742-4f73-970a-d0512458ee3c.png" alt="My Image settings">'
         )
     )
 ]
