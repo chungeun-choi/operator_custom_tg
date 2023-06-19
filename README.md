@@ -1,16 +1,3 @@
-# Airflow 커스텀 오퍼레이터 
-
-## SAMPLE 보는 법
-
-### 접속 정보
-
-- HOST: [Airflow-test-lab](http://airflow.cucuridas.info:28080/login/?next=http%3A%2F%2Fairflow.cucuridas.info%3A28080%2Fhome) , [Data visualizing - grafana](http://grafana.cucuridas.info:3000/login)
-- AUTH:
-    
-     - Airflow: test (ID),  test123! (password)
-    
-     - Grafana: test_user (ID), test123! (password)
-    
 
 ### login 및 DAG desciprtion 보는 방법
 
