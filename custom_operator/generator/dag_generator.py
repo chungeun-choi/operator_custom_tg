@@ -38,7 +38,7 @@ with DAG(
         with TaskGroup(group_id="Group_{}".format(log)) as innserGroup:
 
             redis_sensor_task = RedisSensorOperator(
-                task_id="Check_{}_template_int_redis".format(log),
+                task_id="Check_{}_template_in_redis".format(log),
                 index_name=log,
                 timeout=2,
                 soft_fail=True,
