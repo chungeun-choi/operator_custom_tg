@@ -38,14 +38,14 @@ with DAG(
         with TaskGroup(group_id="Group_{}".format(log)) as innserGroup:
 
             redis_sensor_task = RedisSensorOperator(
-                task_id="Check_redis_sensor_to_{}".format(log),
+                task_id="Check_{}_template_int_redis".format(log),
                 index_name=log,
                 timeout=2,
                 soft_fail=True,
             )
 
-            add_sample_task = AddSampleLogOperator(
-                task_id="Add_sample_data_from_{}".format(log),
+            add_log_template = AddSampleLogOperator(
+                task_id="Add_log_template_from_{}".format(log),
                 index_name=log,
                 size=10000,
                 conn_id=CONNECTION,
@@ -62,5 +62,5 @@ with DAG(
                 # end_date=datetime.fromisoformat("{{next_execution_date}}")
             )
 
-        redis_sensor_task >> add_sample_task
-        add_sample_task >> generate_log_task
+        redis_sensor_task >> add_log_template
+        add_log_template >> generate_log_task

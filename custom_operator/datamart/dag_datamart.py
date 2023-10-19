@@ -42,7 +42,7 @@ with DAG(
     dag_id="Make_datamart",
     tags=["datamart"],
     doc_md=DESCRIPTION,
-    description="Varilable에 정의되어진 정보를 통해 dat awarehouse에서 data mart를 생성하는 DAG입니다",
+    description="Varilable에 정의되어진 정보를 통해 dat datawarehouse에서 data mart를 생성하는 DAG입니다",
     start_date=datetime(2022, 5, 28),
     catchup=False,
     params={
