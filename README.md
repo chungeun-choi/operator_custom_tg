@@ -38,6 +38,6 @@
 
 ### Detector
 
-이 워크플로는 데이터 웨어하우스(Elasticsearch)에서 사용자 입력에 따라 특정 값을 탐지하는 데 사용됩니다.
+이 워크플로는 데이터 웨어하우스(Elasticsearch)에서 사용자 입력에 따라 특정 값을 탐지하는 데 사용됩니다. [소스 코드 링크](https://github.com/cucuridas/operator_custom_tg/tree/main/custom_operator/detect)
 
 ![이미지](https://github.com/cucuridas/operator_custom_tg/assets/65060314/c475b447-863f-4b94-a507-b9c06a8832e6)
